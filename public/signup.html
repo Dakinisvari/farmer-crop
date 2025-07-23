@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farmer Signup</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Logout button -->
+  <div style="position: absolute; top: 10px; right: 20px;">
+    <button onclick="showLogoutConfirm()" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">Logout</button>
+  </div>
+
+  <div class="container">
+    <h2>Farmer Signup</h2>
+
+    <form id="signupForm" action="/signup" method="POST" onsubmit="return handleSignup(event)">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" placeholder="Enter full name" required>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" placeholder="Enter phone number" required>
+
+      <label for="aadhar">Aadhar Number:</label>
+      <input type="text" id="aadhar" name="aadhar" placeholder="Enter 12-digit Aadhar number" required>
+
+      <label for="password">Create Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+      <label for="language">Preferred Language:</label>
+      <select name="lang" id="language">
+        <option value="en">English</option>
+        <option value="ta">Tamil</option>
+        <option value="hi">Hindi</option>
+      </select>
+
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="index.html">Login</a></p>
+  </div>
+
+  <!-- Signup successful modal -->
+<div id="successModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); z-index:999; justify-content:center; align-items:center;">
+  <div style="background:white; padding:20px; border-radius:10px; text-align:center;">
+    <h3>Signup Successful!</h3>
+    <p>You have successfully registered.</p>
+    <button onclick="closeSuccessModal()" style="margin-top:10px; padding:8px 15px;">OK</button>
+  </div>
+</div>
+
+
+  <!-- Logout confirmation modal -->
+  <div id="logoutModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); z-index:999; justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:10px; text-align:center;">
+      <p>Are you sure you want to logout?</p>
+      <button onclick="confirmLogout(true)" style="margin: 10px; padding: 8px 15px;">Yes</button>
+      <button onclick="confirmLogout(false)" style="margin: 10px; padding: 8px 15px;">No</button>
+    </div>
+  </div>
+
+  <script>
+    function showLogoutConfirm() {
+      document.getElementById("logoutModal").style.display = "flex";
+    }
+
+    function confirmLogout(shouldLogout) {
+      document.getElementById("logoutModal").style.display = "none";
+      if (shouldLogout) {
+        window.location.href = "index.html"; // or logout endpoint
+      }
+    }
+
+    function handleSignup(event) {
+  event.preventDefault(); // Prevent actual submission for modal
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const aadhar = document.getElementById("aadhar").value.trim();
+  const password = document.getElementById("password").value;
+  const phoneRegex = /^\d{10}$/;
+  const aadharRegex = /^\d{12}$/;
+
+  if (name === "") {
+    alert("Please enter your full name.");
+    return false;
+  }
+
+  if (!aadharRegex.test(aadhar)) {
+    alert("Please enter a valid 12-digit Aadhar number.");
+    return false;
+  }
+
+  if (!phoneRegex.test(phone)) {
+    alert("Please enter a valid 10-digit phone number.");
+    return false;
+  }
+
+  if (password.length < 6) {
+    alert("Password must be at least 6 characters.");
+    return false;
+  }
+
+  // Show signup success modal instead of alert
+  document.getElementById("successModal").style.display = "flex";
+  return false; // prevent form submission for demo; set to true if server needed
+}
+
+function closeSuccessModal() {
+  document.getElementById("successModal").style.display = "none";
+  document.getElementById("signupForm").submit();  // 🔧 Submits the form to the server
+}
+
+
+
+    // Show error from query string
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('error')) {
+      document.write('<p style="color:red;">' + params.get('error') + '</p>');
+    }
+  </script>
+</body>
+
+</html>

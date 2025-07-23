@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coir Mulch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom right, #b2c8e9, #c2ebd7);
+      padding: 40px 20px;
+      margin: 0;
+      color: #2d3436;
+      text-align: center;
+    }
+
+    h1 {
+      color: #1e8449;
+      font-size: 2.6rem;
+      margin-bottom: 10px;
+    }
+
+    .action-buttons {
+      margin-bottom: 25px;
+    }
+
+    .action-buttons button {
+      background: linear-gradient(145deg, #74b9ff, #a29bfe);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, background 0.3s;
+      cursor: pointer;
+    }
+
+    .action-buttons button:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(145deg, #55efc4, #81ecec);
+    }
+
+    .scroll-box {
+      max-width: 720px;
+      height: 250px;
+      margin: 20px auto;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    .scroll-box h3 {
+      color: #1e8449;
+      margin-top: 0;
+    }
+
+    .scroll-box ol {
+      padding-left: 20px;
+      line-height: 1.7;
+    }
+
+    #backBtn {
+      background-color: #636e72;
+      color: white;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #orderBtn {
+      background: linear-gradient(to right, #00b894, #00cec9);
+      color: white;
+      padding: 14px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 40px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    #orderBtn:hover {
+      transform: scale(1.05);
+    }
+
+    #gsmValue {
+      font-size: 22px;
+      font-weight: 600;
+      background: #ffeaa7;
+      color: #2d3436;
+      padding: 14px 26px;
+      border-radius: 14px;
+      display: inline-block;
+      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.8s ease;
+    }
+
+    #cropTypeDisplay {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #2e8b57;
+      font-weight: 600;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #cropTypeInput {
+      margin-top: 20px;
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 240px;
+    }
+
+    .crop-submit {
+      padding: 10px 20px;
+      margin-left: 10px;
+      background-color: #2e8b57;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .crop-submit:hover {
+      transform: scale(1.05);
+    }
+
+    #orderModal {
+      display: none;
+      position: fixed;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -35%);
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      width: 300px;
+      text-align: center;
+    }
+
+    #orderModal button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #27ae60;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .input-section {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <button id="backBtn" onclick="goBack()">← Back</button>
+  <h1>Coir Mulch</h1>
+
+  <div class="action-buttons">
+    <button onclick="showInstructions()">Instructions</button>
+    <button onclick="showBenefits()">Benefits</button>
+  </div>
+
+  <div id="infoBox" class="scroll-box"></div>
+
+  <div id="gsmValue">Loading recommended GSM...</div>
+  <div id="cropTypeDisplay"></div>
+
+  <div class="input-section">
+    <input type="text" id="cropTypeInput" placeholder="Enter crop type (e.g., vegetable)">
+    <button class="crop-submit" onclick="submitCropType()">Submit Crop Type</button>
+  </div>
+
+  <button id="orderBtn" onclick="openOrderModal()">Order Now</button>
+
+  <div id="orderModal">
+    <p><strong>✅ Order placed successfully!</strong></p>
+    <button onclick="closeOrderModal()">Close</button>
+  </div>
+
+  <script>
+    function goBack() {
+      window.location.href = "home.html";
+    }
+
+    function showInstructions() {
+      document.getElementById("infoBox").innerHTML = `
+        <h3>Coir Mulching Instructions</h3>
+        <ol>
+          <li>Open the coir mulch roll carefully.</li>
+          <li>Spread it evenly over the soil area.</li>
+          <li>Insert sensors into the marked soil points.</li>
+          <li>Connect to microcontroller (our team will assist).</li>
+          <li>Water manually or let the system auto-irrigate.</li>
+        </ol>`;
+    }
+
+    function showBenefits() {
+      document.getElementById("infoBox").innerHTML = `
+        <h3>Benefits of Coir Mulch</h3>
+        <ol>
+          <li>Retains moisture, reduces watering needs.</li>
+          <li>Regulates soil temperature in all seasons.</li>
+          <li>Suppresses weeds and improves soil fertility.</li>
+          <li>100% eco-friendly and biodegradable.</li>
+          <li>Prevents erosion and encourages root growth.</li>
+        </ol>`;
+    }
+
+    function openOrderModal() {
+      document.getElementById("orderModal").style.display = "block";
+    }
+
+    function closeOrderModal() {
+      document.getElementById("orderModal").style.display = "none";
+    }
+
+    function submitCropType() {
+      const input = document.getElementById("cropTypeInput");
+      const cropType = input.value.trim().toLowerCase();
+
+      if (!cropType) {
+        alert("Please enter a crop type.");
+        return;
+      }
+
+      let gsm = "N/A";
+      switch (cropType) {
+        case "vegetable": gsm = "900 GSM"; break;
+        case "flower": gsm = "300 GSM"; break;
+        case "fruit": gsm = "700 GSM"; break;
+        case "coconut": gsm = "1200 GSM"; break;
+        default: gsm = "Please consult with our team.";
+      }
+
+      document.getElementById("gsmValue").textContent = `${cropType.toUpperCase()} → ${gsm}`;
+      document.getElementById("cropTypeDisplay").textContent = `Crop Type: ${cropType.toUpperCase()}`;
+    }
+
+    submitCropType();
+  </script>
+</body>
+</html>

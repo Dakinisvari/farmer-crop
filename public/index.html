@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farmer Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2 id="loginTitle">Farmer Login</h2>
+
+    <label for="language" id="langLabel">Select Language:</label>
+    <select name="lang" id="language" onchange="changeLanguage()">
+      <option name="english" value="en">English</option>
+      <option name="tamil" value="ta">Tamil</option>
+      <option name="hindi" value="hi">Hindi</option>
+    </select>
+
+    <form id="loginForm" method="POST" action="/login" onsubmit="return showSuccessModal(event)">
+      <label for="phone" id="phoneLabel">Phone Number:</label>
+      <input type="tel" name="phone" id="phone" placeholder="Enter phone number" required>
+
+      <label for="password" id="passwordLabel">Password:</label>
+      <input type="password" name="pass" id="password" placeholder="Enter password" required>
+
+      <button type="submit" name="sub"id="loginBtn">Login</button>
+    </form>
+
+    <p id="signupText">Don't have an account? <a href="signup.html" id="signupLink">Sign Up</a></p>
+  </div>
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+  <div class="modal-content">
+    <p>Login Successful!</p>
+    <button id="closeModal" onclick="closeSuccessModal()">OK</button>
+
+
+  </div>
+</div>
+<!-- Error Modal -->
+<div id="errorModal" class="modal">
+  <div class="modal-content">
+    <p id="errorMessage"></p>
+    <button onclick="closeErrorModal()">OK</button>
+  </div>
+</div>
+  <script>
+
+function showSuccessModal(event) {
+  event.preventDefault();
+
+  const phone = document.getElementById("phone").value.trim();
+  const password = document.getElementById("password").value;
+  const phoneRegex = /^\d{10}$/;
+
+  if (!phone || !password) return showError("Please fill in both fields.");
+  if (!phoneRegex.test(phone)) return showError("Enter a valid 10-digit phone number.");
+  if (password.length < 6) return showError("Password must be at least 6 characters.");
+
+  // Instead of normal form submission, do a fetch to POST login
+  fetch("/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({ phone, pass: password })
+  })
+  .then(res => res.json())
+.then(data => {
+  if (data.success) {
+    window.location.href = `/crop-details.html?farmer_id=${data.farmerId}`;
+  } else {
+    showError(data.message || "Login failed.");
+  }
+})
+
+  .catch(() => showError("Network error. Try again."));
+  
+  return false;
+}
+
+
+function closeSuccessModal() {
+  document.getElementById("successModal").style.display = "none";
+  window.location.href = "crop-details.html"; // or dashboard.html
+}
+
+
+function showError(message) {
+  document.getElementById("errorMessage").innerText = message;
+  document.getElementById("errorModal").style.display = "block";
+}
+
+function closeErrorModal() {
+  document.getElementById("errorModal").style.display = "none";
+}
+      
+    const translations = {
+      en: {
+        loginTitle: "Farmer Login",
+        langLabel: "Select Language:",
+        phoneLabel: "Phone Number:",
+        passwordLabel: "Password:",
+        loginBtn: "Login",
+        signupText: "Don't have an account? ",
+        signupLink: "Sign Up"
+      },
+      ta: {
+        loginTitle: "விவசாயி உள்நுழைவு",
+        langLabel: "மொழியைத் தேர்ந்தெடுக்கவும்:",
+        phoneLabel: "தொலைபேசி எண்:",
+        passwordLabel: "கடவுச்சொல்:",
+        loginBtn: "உள்நுழைக",
+        signupText: "கணக்கு இல்லையா? ",
+        signupLink: "பதிவு செய்யவும்"
+      },
+      hi: {
+        loginTitle: "किसान लॉगिन",
+        langLabel: "भाषा चुनें:",
+        phoneLabel: "फ़ोन नंबर:",
+        passwordLabel: "पासवर्ड:",
+        loginBtn: "लॉगिन करें",
+        signupText: "अकाउंट नहीं है? ",
+        signupLink: "साइन अप करें"
+      }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById("language").value;
+      const t = translations[lang];
+      document.getElementById("loginTitle").innerText = t.loginTitle;
+      document.getElementById("langLabel").innerText = t.langLabel;
+      document.getElementById("phoneLabel").innerText = t.phoneLabel;
+      document.getElementById("passwordLabel").innerText = t.passwordLabel;
+      document.getElementById("loginBtn").innerText = t.loginBtn;
+      document.getElementById("signupText").firstChild.nodeValue = t.signupText;
+      document.getElementById("signupLink").innerText = t.signupLink;
+    }
+  </script>
+  
+</body>
+
+</html>

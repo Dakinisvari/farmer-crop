@@ -1,0 +1,199 @@
+<!-- public/crop-details.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crop Details</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .container {
+      margin-top: 60px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label, input, button {
+      margin-bottom: 10px;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .modal-buttons {
+      margin-top: 15px;
+    }
+
+    .modal-buttons button {
+      margin: 0 10px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .yes-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .no-btn {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <button class="logout-btn" onclick="confirmLogout()">Logout</button>
+
+  <div class="container">
+    <h2>Crop Details</h2>
+
+    <form id="cropForm" action="/crop-details" method="POST">
+
+
+      <label>Location:</label>
+      <button type="button" onclick="openLocationDialog()" id="locationBtn">Set Location</button>
+      <input type="hidden" name="location" id="locationInput" value="Sivakasi">
+
+
+<input type="hidden" name="farmer_id" id="farmerIdField">
+
+
+      <label>Land Area (acres):</label>
+      <input type="number" step="0.01" name="land_area" required>
+
+      <label>Soil Type:</label>
+      <input type="text" name="soil_type" required>
+
+      <label>Sowing Date:</label>
+      <input type="date" name="sowing_date" required>
+
+      <button type="submit">Submit Details</button>
+      
+    </form>
+  </div>
+
+  <!-- Location Confirmation Modal -->
+  <div id="locationModal" class="modal">
+    <div class="modal-content">
+      <p>Fetching location....</p>
+      <div class="modal-buttons">
+        <button class="yes-btn" onclick="setLocation()">Ok</button>
+        <button class="no-btn" onclick="closeLocationModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+  
+  // Get farmer_id from URL and add it to hidden field
+      function openLocationDialog() {
+      document.getElementById('locationModal').style.display = "block";
+    }
+
+    function setLocation() {
+      const defaultLocation = "Sivakasi";
+      document.getElementById('locationBtn').innerText = defaultLocation;
+      document.getElementById('locationInput').value = defaultLocation;
+      document.getElementById('locationModal').style.display = "none";
+    }
+
+    function closeLocationModal() {
+      document.getElementById('locationModal').style.display = "none";
+    }
+
+    function confirmLogout() {
+    if (confirm("Are you sure you want to logout?")) {
+      window.location.href = "/index.html";
+    }
+  }
+  </script>
+  <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const farmerId = urlParams.get("farmer_id");
+
+  if (farmerId) {
+    document.getElementById("farmerIdField").value = farmerId;
+  } else {
+    alert("Unauthorized access. Please login again.");
+    window.location.href = "/index.html";
+  }
+  function logout() {
+  closeLogoutModal();
+  setTimeout(() => {
+    window.location.href = "/logout";  // 🔧 Use /logout endpoint to destroy session
+  }, 300);
+}
+</script>
+<script>
+  document.getElementById("cropForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  const farmerId = document.getElementById("farmerIdField").value;
+
+  const response = await fetch("/crop-details", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams(formData),
+  });
+
+  if (response.ok) {
+    window.location.href = "/home.html?farmer_id=" + farmerId;
+  } else {
+    alert("Error submitting crop details");
+  }
+});
+
+</script>
+
+
+</body>
+</html>
